@@ -4,10 +4,17 @@ const server = {
   address: 'localhost',
   port: '1234'
 }
-const sensors = {
-  TEMPERATURE: {id: 1, timeout: 3000},
-  HUMIDITY: {id: 2, timeout: 5000}
+const vendors = {
+  AWS: 0,
+  GOOGLE: 1,
+  AZURE: 2
 }
+
+const sensors = {
+  TEMPERATURE: {id: 1348, vendor: vendors.AWS, timeout: 3000},
+  HUMIDITY: {id: 2847, vendor: vendors.GOOGLE, timeout: 5000}
+}
+
 let intervals = [];
 
 client.on('connectFailed', function (error) {
@@ -43,10 +50,14 @@ function startClient() {
   client.connect(`ws://${server.address}:${server.port}/`, 'echo-protocol', 'edgeGateway');
 }
 
-function sendSensorValue(connection, id) {
+function sendSensorValue(connection, sensor) {
   if (connection.connected) {
+    const {id, vendor} = sensor;
+    const type = 0;
     const pack = {
       id,
+      vendor,
+      type,
       data: Math.round(Math.random() * 0xF)
     }
     connection.sendUTF(JSON.stringify(pack));
@@ -55,7 +66,7 @@ function sendSensorValue(connection, id) {
 
 function startSensor(connection, sensor){
   const interval = setInterval(()=>{
-    sendSensorValue(connection, sensor.id);
+    sendSensorValue(connection, sensor);
   }, sensor.timeout);
   intervals.push(interval);
 };
