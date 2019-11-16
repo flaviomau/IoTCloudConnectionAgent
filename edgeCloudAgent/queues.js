@@ -1,10 +1,11 @@
 import Queue from 'bull';
 
-export const NOTIFY_URL = 'NOTIFY_URL';
+export const AWS_CLOUD_PROVIDER = 'AWS_CLOUD_PROVIDER';
+export const AZURE_CLOUD_PROVIDER = 'AZURE_CLOUD_PROVIDER';
+export const GOOGLE_CLOUD_PROVIDER = 'GOOGLE_CLOUD_PROVIDER';
 
 export const queues = {
-  [NOTIFY_URL]: new Queue(
-    NOTIFY_URL,
-    process.env.REDIS_URL
-  )
+  [AWS_CLOUD_PROVIDER]: new Queue(AWS_CLOUD_PROVIDER, process.env.REDIS_URL),
+  [AZURE_CLOUD_PROVIDER]: new Queue(AZURE_CLOUD_PROVIDER, process.env.REDIS_URL),
+  [GOOGLE_CLOUD_PROVIDER]: new Queue(GOOGLE_CLOUD_PROVIDER, process.env.REDIS_URL)
 };

@@ -1,4 +1,4 @@
-import { queues, NOTIFY_URL } from './queues';
+import { queues, AWS_CLOUD_PROVIDER, AZURE_CLOUD_PROVIDER, GOOGLE_CLOUD_PROVIDER} from './queues';
 import { server } from 'websocket';
 import * as http from 'http';
 
@@ -40,7 +40,9 @@ wsServer.on('request', function (request) {
   connection.on('message', function (message) {
     if (message.type === 'utf8') {
       console.log('Received Message: ' + message.utf8Data);
-      queues[NOTIFY_URL].add(message);
+      queues[AWS_CLOUD_PROVIDER].add(message, {removeOnComplete: true});
+      queues[AZURE_CLOUD_PROVIDER].add(message, {removeOnComplete: true});
+      queues[GOOGLE_CLOUD_PROVIDER].add(message, {removeOnComplete: true});
       connection.sendUTF(message.utf8Data);
     }
     else if (message.type === 'binary') {
