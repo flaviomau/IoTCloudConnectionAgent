@@ -1,0 +1,29 @@
+{
+  "name": "edgecloudagent",
+  "version": "1.0.0",
+  "description": "Application in charge to connect edge gateways (raspberry pi based) to cloud plataforms.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flaviomau/IoTCloudConnectionAgent.git"
+  },
+  "keywords": [
+    "cloud",
+    "iot",
+    "raspberry",
+    "agent"
+  ],
+  "author": "Flavio Andre da Silva",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/flaviomau/IoTCloudConnectionAgent/issues"
+  },
+  "homepage": "https://github.com/flaviomau/IoTCloudConnectionAgent#readme",
+  "dependencies": {
+    "websocket": "^1.0.30"
+  }
+}

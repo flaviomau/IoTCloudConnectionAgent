@@ -1,0 +1,49 @@
+const WebSocketServer = require('websocket').server;
+const http = require('http');
+const port = '1234';
+const origins = ['edgeGateway'];
+
+var server = http.createServer(function (request, response) {
+  console.log((new Date()) + ' Received request for ' + request.url);
+  response.writeHead(404);
+  response.end();
+});
+server.listen(port, function () {
+  console.log((new Date()) + `Server is listening on port ${port}`);
+});
+
+wsServer = new WebSocketServer({
+  httpServer: server,
+  autoAcceptConnections: false
+});
+
+function originIsAllowed(origin) {
+  if(origins.includes(origin))
+    return true;
+  return false;
+}
+
+wsServer.on('request', function (request) {
+  if (!originIsAllowed(request.origin)) {
+    // Make sure we only accept requests from an allowed origin
+    request.reject();
+    console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
+    return;
+  }
+
+  var connection = request.accept('echo-protocol', request.origin);
+  console.log((new Date()) + ' Connection accepted.');
+  connection.on('message', function (message) {
+    if (message.type === 'utf8') {
+      console.log('Received Message: ' + message.utf8Data);
+      connection.sendUTF(message.utf8Data);
+    }
+    else if (message.type === 'binary') {
+      console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
+      connection.sendBytes(message.binaryData);
+    }
+  });
+  connection.on('close', function (reasonCode, description) {
+    console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+  });
+});
