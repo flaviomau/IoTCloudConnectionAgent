@@ -1,19 +1,23 @@
-const WebSocketServer = require('websocket').server;
-const http = require('http');
+import { queues, NOTIFY_URL } from './queues';
+import { server } from 'websocket';
+import * as http from 'http';
+
+const WebSocketServer = server;
 const port = '1234';
 const origins = ['edgeGateway'];
 
-var server = http.createServer(function (request, response) {
+const httpServer = http.createServer(function (request, response) {
   console.log((new Date()) + ' Received request for ' + request.url);
   response.writeHead(404);
   response.end();
 });
-server.listen(port, function () {
+
+httpServer.listen(port, function () {
   console.log((new Date()) + `Server is listening on port ${port}`);
 });
 
-wsServer = new WebSocketServer({
-  httpServer: server,
+const wsServer = new WebSocketServer({
+  httpServer,
   autoAcceptConnections: false
 });
 
@@ -31,11 +35,12 @@ wsServer.on('request', function (request) {
     return;
   }
 
-  var connection = request.accept('echo-protocol', request.origin);
+  const connection = request.accept('echo-protocol', request.origin);
   console.log((new Date()) + ' Connection accepted.');
   connection.on('message', function (message) {
     if (message.type === 'utf8') {
       console.log('Received Message: ' + message.utf8Data);
+      queues[NOTIFY_URL].add(message);
       connection.sendUTF(message.utf8Data);
     }
     else if (message.type === 'binary') {
@@ -47,3 +52,13 @@ wsServer.on('request', function (request) {
     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
   });
 });
+
+function getRedisConfig(redisUrl) {
+  const redisConfig = url.parse(redisUrl);
+  return {
+    host: redisConfig.hostname || 'localhost',
+    port: Number(redisConfig.port || 6379),
+    database: (redisConfig.pathname || '/0').substr(1) || '0',
+    password: redisConfig.auth ? redisConfig.auth.split(':')[1] : undefined
+  };
+}

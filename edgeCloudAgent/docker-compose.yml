@@ -1,0 +1,46 @@
+version: '2'
+services:
+    app:
+        build: .
+        container_name: edge-cloud-agent
+        environment:
+            - NODE_ENV=development
+            - PORT=1234
+            - REDIS_URL=redis://queue-cache
+        command: "sh -c 'npm i && npm run dev'"
+        volumes:
+            - .:/var/www/app
+        links:
+            - redis
+        ports:
+            - "1234:1234"
+
+    worker:
+        build: .
+        container_name: worker
+        environment:
+            - NODE_ENV=development
+            - PORT=1234
+            - REDIS_URL=redis://queue-cache
+        command: "sh -c 'npm i && npm run worker:dev'"
+        volumes:
+            - .:/var/www/app
+        links:
+            - redis
+
+    redis:
+        image: redis
+        container_name: queue-cache
+        expose:
+            - "6379"
+
+    redis-commander:
+      container_name: redis-commander
+      hostname: redis-commander
+      image: rediscommander/redis-commander:latest
+      build: .
+      restart: always
+      environment:
+          - REDIS_HOSTS=local:redis:6379
+      ports:
+          - "8081:8081"

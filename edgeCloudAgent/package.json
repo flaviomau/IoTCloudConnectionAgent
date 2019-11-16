@@ -2,10 +2,12 @@
   "name": "edgecloudagent",
   "version": "1.0.0",
   "description": "Application in charge to connect edge gateways (raspberry pi based) to cloud plataforms.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node -r esm server.js",
+    "dev": "nodemon -r esm server.js",
+    "worker": "node -r esm worker.js",
+    "worker:dev": "nodemon -r esm worker.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,9 @@
   },
   "homepage": "https://github.com/flaviomau/IoTCloudConnectionAgent#readme",
   "dependencies": {
+    "bull": "^3.12.0",
+    "esm": "^3.2.25",
+    "nodemon": "^1.19.4",
     "websocket": "^1.0.30"
   }
 }
