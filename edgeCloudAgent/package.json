@@ -27,6 +27,10 @@
   "homepage": "https://github.com/flaviomau/IoTCloudConnectionAgent#readme",
   "dependencies": {
     "aws-iot-device-sdk": "^2.2.1",
+    "azure-iot-device": "^1.12.0",
+    "azure-iot-device-mqtt": "^1.11.0",
+    "azure-iot-provisioning-device-mqtt": "^1.6.0",
+    "azure-iot-security-symmetric-key": "^1.6.0",
     "bull": "^3.12.0",
     "esm": "^3.2.25",
     "jsonwebtoken": "^8.5.1",

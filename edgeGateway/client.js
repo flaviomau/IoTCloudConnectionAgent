@@ -11,8 +11,9 @@ const providers = {
 }
 
 const sensors = {
-  TEMPERATURE: {id: 1348, provider: providers.AWS, timeout: 3000},
-  HUMIDITY: {id: 2847, provider: providers.GOOGLE, timeout: 5000}
+  TEMPERATURE: {id: 1348, provider: providers.AWS, timeout: 7000},
+  HUMIDITY: {id: 2847, provider: providers.GOOGLE, timeout: 5000},
+  WIND: {id: 7845, provider: providers.AZURE, timeout: 3000},
 }
 
 let intervals = [];
@@ -23,8 +24,9 @@ client.on('connectFailed', function (error) {
 
 client.on('connect', function (connection) {
   console.log('WebSocket Client Connected');
+  startSensor(connection, sensors.WIND);
   startSensor(connection, sensors.TEMPERATURE);
-  //startSensor(connection, sensors.HUMIDITY);
+  startSensor(connection, sensors.HUMIDITY);
   connection.on('error', function (error) {
     console.log("Connection Error: " + error.toString());
     stopSensors();
