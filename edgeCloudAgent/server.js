@@ -1,6 +1,12 @@
-import { queues, AWS_CLOUD_PROVIDER, AZURE_CLOUD_PROVIDER, GOOGLE_CLOUD_PROVIDER} from './queues';
+import { queues, AWS_CLOUD_PROVIDER, GOOGLE_CLOUD_PROVIDER, AZURE_CLOUD_PROVIDER} from './queues';
 import { server } from 'websocket';
 import * as http from 'http';
+
+const providers = {
+  0: AWS_CLOUD_PROVIDER,
+  1: GOOGLE_CLOUD_PROVIDER,
+  2:AZURE_CLOUD_PROVIDER
+}
 
 const WebSocketServer = server;
 const port = '1234';
@@ -29,7 +35,6 @@ function originIsAllowed(origin) {
 
 wsServer.on('request', function (request) {
   if (!originIsAllowed(request.origin)) {
-    // Make sure we only accept requests from an allowed origin
     request.reject();
     console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
     return;
@@ -39,10 +44,9 @@ wsServer.on('request', function (request) {
   console.log((new Date()) + ' Connection accepted.');
   connection.on('message', function (message) {
     if (message.type === 'utf8') {
-      console.log('Received Message: ' + message.utf8Data);
-      queues[AWS_CLOUD_PROVIDER].add(message, {removeOnComplete: true});
-      queues[AZURE_CLOUD_PROVIDER].add(message, {removeOnComplete: true});
-      queues[GOOGLE_CLOUD_PROVIDER].add(message, {removeOnComplete: true});
+      const info = JSON.parse(message.utf8Data);
+      console.log('Received Message: ', info);
+      queues[providers[info.provider]].add(info.data, {removeOnComplete: true});
       connection.sendUTF(message.utf8Data);
     }
     else if (message.type === 'binary') {
@@ -54,13 +58,3 @@ wsServer.on('request', function (request) {
     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
   });
 });
-
-function getRedisConfig(redisUrl) {
-  const redisConfig = url.parse(redisUrl);
-  return {
-    host: redisConfig.hostname || 'localhost',
-    port: Number(redisConfig.port || 6379),
-    database: (redisConfig.pathname || '/0').substr(1) || '0',
-    password: redisConfig.auth ? redisConfig.auth.split(':')[1] : undefined
-  };
-}

@@ -3,11 +3,11 @@ const process = (data) => {
 }
 
 const send = (data) => {
-  console.log(`sending data to AZURE`);
+  console.log(`sending data to AWS`);
 }
 
 const configure = (config) => {
-  console.log(`configuring data to AZURE`);
+  console.log(`configuring data to AWS`);
 }
 
-exports.defaut  = {process, send, configure};
+module.exports = { process, send, configure };

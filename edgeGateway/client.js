@@ -4,15 +4,15 @@ const server = {
   address: 'localhost',
   port: '1234'
 }
-const vendors = {
+const providers = {
   AWS: 0,
   GOOGLE: 1,
   AZURE: 2
 }
 
 const sensors = {
-  TEMPERATURE: {id: 1348, vendor: vendors.AWS, timeout: 3000},
-  HUMIDITY: {id: 2847, vendor: vendors.GOOGLE, timeout: 5000}
+  TEMPERATURE: {id: 1348, provider: providers.AWS, timeout: 3000},
+  HUMIDITY: {id: 2847, provider: providers.GOOGLE, timeout: 5000}
 }
 
 let intervals = [];
@@ -52,11 +52,11 @@ function startClient() {
 
 function sendSensorValue(connection, sensor) {
   if (connection.connected) {
-    const {id, vendor} = sensor;
+    const {id, provider} = sensor;
     const type = 0;
     const pack = {
       id,
-      vendor,
+      provider,
       type,
       data: Math.round(Math.random() * 0xF)
     }

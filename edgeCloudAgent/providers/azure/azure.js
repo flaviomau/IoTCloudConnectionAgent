@@ -10,4 +10,4 @@ const configure = (config) => {
     console.log(`configuring data to AZURE`);
 }
 
-exports.defaut  = {process, send, configure};
+module.exports = { process, send, configure };

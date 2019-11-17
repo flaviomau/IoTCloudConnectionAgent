@@ -28,6 +28,8 @@
   "dependencies": {
     "bull": "^3.12.0",
     "esm": "^3.2.25",
+    "jsonwebtoken": "^8.5.1",
+    "mqtt": "^3.0.0",
     "nodemon": "^1.19.4",
     "websocket": "^1.0.30"
   }
