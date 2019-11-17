@@ -24,7 +24,7 @@ client.on('connectFailed', function (error) {
 client.on('connect', function (connection) {
   console.log('WebSocket Client Connected');
   startSensor(connection, sensors.TEMPERATURE);
-  startSensor(connection, sensors.HUMIDITY);
+  //startSensor(connection, sensors.HUMIDITY);
   connection.on('error', function (error) {
     console.log("Connection Error: " + error.toString());
     stopSensors();
