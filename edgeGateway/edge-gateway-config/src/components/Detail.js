@@ -1,19 +1,27 @@
 import React, { Component } from 'react'
 import Form from 'react-bootstrap/Form'
-import Card from 'react-bootstrap/Card'
+import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
+import GeneralDetail from './GeneralDetail'
 import AwsDetail from './AwsDetail';
-import AzureDetail from './AzureDetails';
+import AzureDetail from './AzureDetail';
 import GoogleDetail from './GoogleDetail';
 
 class Detail extends Component {
   state = {
-    data: {},
+    general: {},
     aws: {}, 
     azure: {}, 
     google: {},
-    isLoading: true
+    isLoading: true,
+    error: undefined
   };
+
+  onGeneralChangeValueHandler = (val) => {
+    let state = {...this.state}
+    state.general[val.target.id] = val.target.value
+    this.setState(state)
+  }
 
   onAwsChangeValueHandler = (val) => {
     let state = {...this.state}
@@ -33,64 +41,55 @@ class Detail extends Component {
     this.setState(state)
   }
 
-  /*
+  saveForm(data){
+    if(!data.general.provider){
+      const state = {...this.state}
+      state.error = 'Select one provider'
+      this.setState(state)
+    }
+  }
+
+  
   componentDidMount() {
-    this.callBackendAPI()
-      .then(res => this.setState({ data: res.inputs, isLoading: false }))
+    this.callBackendAPI(this.props.match.params.id)
+      .then(res => {
+        if(JSON.stringify(res) !== '{}'){
+          let state = this.state;
+          state.general = res.general;
+          state.aws = res.aws;
+          state.azure = res.azure;
+          state.google = res.google;
+          state.isLoading = true;
+          this.setState(state);
+        }
+      })
       .catch(err => console.log(err));
   }
 
-  callBackendAPI = async () => {
-    const response = await fetch('/getInputs');
+  callBackendAPI = async (id) => {
+    const response = await fetch('/getInput/' + id);
     const body = await response.json();
     if (response.status !== 200) {
       throw Error(body.message)
     }
     return body;
   };
-  */
+  
 
   render() {
-    const { aws, azure, google } = this.state;
+    const { general, aws, azure, google } = this.state;
     return (
       <div>
         <h1 className="header">Edit item</h1>
         <Form>
-          <Card >
-            <Card.Header>
-              General information
-            </Card.Header>
-            <Card.Body>
-              <Form.Group controlId="item.id">
-                <Form.Label>Id</Form.Label>
-                <Form.Control type="text" placeholder="Id" />
-              </Form.Group>
-              <Form.Group controlId="item.interval">
-                <Form.Label>Interval (simulate sensor)</Form.Label>
-                <Form.Control type="text" placeholder="Interval" />
-              </Form.Group>
-              <Form.Group controlId="item.max_value">
-                <Form.Label>Max Value (simulate sensor)</Form.Label>
-                <Form.Control type="text" placeholder="Max Value" />
-              </Form.Group>
-              <Form.Group controlId="item.provider.name">
-                <Form.Label>Provider</Form.Label>
-                <Form.Control as="select">
-                  <option>AWS</option>
-                  <option>AZURE</option>
-                  <option>GOOGLE</option>
-                </Form.Control>
-              </Form.Group>
-            </Card.Body>
-          </Card>
-          <br />
-          <AwsDetail aws={aws} onChangeValue={this.onAwsChangeValueHandler}/>
-          <br />
-          <AzureDetail azure={azure} onChangeValue={this.onAzureChangeValueHandler}/>
-          <br />
-          <GoogleDetail google={google} onChangeValue={this.onGoogleChangeValueHandler}/>
-          <br />
-          <Button variant="primary" type="submit">
+          <GeneralDetail general={general} onChangeValue={this.onGeneralChangeValueHandler}/><br />
+          <AwsDetail aws={aws} onChangeValue={this.onAwsChangeValueHandler}/><br />
+          <AzureDetail azure={azure} onChangeValue={this.onAzureChangeValueHandler}/><br />
+          <GoogleDetail google={google} onChangeValue={this.onGoogleChangeValueHandler}/><br />
+          {
+            this.state.error && <Alert variant='danger'>{this.state.error}</Alert>
+          }          
+          <Button variant="primary" onClick={ () => this.saveForm(this.state)}>
             Submit
           </Button>
         </Form>

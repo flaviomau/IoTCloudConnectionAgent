@@ -32,8 +32,8 @@ class Itens extends Component {
           this.state.data.length > 0 && 
           this.state.data.map(item => {
             return (
-              <div key={item.id}>
-                <ItemCard item={item} />
+              <div key={item.general.id}>
+                <ItemCard item={item.general} />
                 <br />
               </div>
             )
