@@ -23,6 +23,8 @@
   "homepage": "https://github.com/flaviomau/IoTCloudConnectionAgent#readme",
   "dependencies": {
     "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "path": "^0.12.7",
     "websocket": "^1.0.30"
   }
 }

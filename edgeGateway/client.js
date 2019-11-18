@@ -1,9 +1,15 @@
 const WebSocketClient = require('websocket').client;
+const app = require('./server');
+
 const client = new WebSocketClient();
 const server = {
   address: 'localhost',
-  port: '1234'
+  port: '1234',
+  webAppPort: process.env.PORT || 5000 
 }
+
+app.listen(server.webAppPort, () => console.log(`Listening on port ${server.webAppPort}`));
+
 const providers = {
   AWS: 0,
   GOOGLE: 1,
