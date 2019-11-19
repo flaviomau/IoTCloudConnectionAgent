@@ -1,14 +1,12 @@
 const WebSocketClient = require('websocket').client;
-const app = require('./server');
-
+const server = require('./server');
 const client = new WebSocketClient();
-const server = {
+
+const config = {
   address: 'localhost',
   port: '1234',
   webAppPort: process.env.PORT || 5000 
 }
-
-app.listen(server.webAppPort, () => console.log(`Listening on port ${server.webAppPort}`));
 
 const providers = {
   AWS: 0,
@@ -30,6 +28,7 @@ client.on('connectFailed', function (error) {
 
 client.on('connect', function (connection) {
   console.log('WebSocket Client Connected');
+  conn = connection;
   startSensor(connection, sensors.WIND);
   startSensor(connection, sensors.TEMPERATURE);
   startSensor(connection, sensors.HUMIDITY);
@@ -55,13 +54,13 @@ client.on('connectFailed', function (errorDescription) {
 })
 
 function startClient() {
-  client.connect(`ws://${server.address}:${server.port}/`, 'echo-protocol', 'edgeGateway');
+  client.connect(`ws://${config.address}:${config.port}/`, 'echo-protocol', 'edgeGateway');
 }
 
 function sendSensorValue(connection, sensor) {
   if (connection.connected) {
     const {id, provider} = sensor;
-    const type = 0;
+    const type = 'data';
     const pack = {
       id,
       provider,
@@ -85,4 +84,11 @@ function stopSensors(){
   });
 }
 
+server.emitter.on('update', (info) => {
+  if(conn.connected){
+    conn.sendUTF(JSON.stringify(info));
+  }
+});
+
 startClient();
+server.app.listen(config.webAppPort, () => console.log(`Listening on port ${config.webAppPort}`));

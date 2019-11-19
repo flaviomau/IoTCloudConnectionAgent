@@ -46,8 +46,12 @@ wsServer.on('request', function (request) {
     if (message.type === 'utf8') {
       const info = JSON.parse(message.utf8Data);
       console.log('Received Message: ', info);
-      queues[providers[info.provider]].add(info.data, {removeOnComplete: true});
-      connection.sendUTF(message.utf8Data);
+      if(info.type === 'config'){
+        reconfigProvider(info.provider, info.data);
+      } else {
+        //queues[providers[info.provider]].add(info.data, {removeOnComplete: true});
+      }      
+      connection.sendUTF('ACK');
     }
     else if (message.type === 'binary') {
       console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
@@ -58,3 +62,8 @@ wsServer.on('request', function (request) {
     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
   });
 });
+
+function reconfigProvider(provider, data){
+  console.log('New config receiced to provider: ', provider, 'data: ', data);
+  console.log('FEATURE WILL BE IMPLEMENTED IN NEXT RELEASE. 8(')
+}

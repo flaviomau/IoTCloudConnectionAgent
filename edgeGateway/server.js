@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const db = require('./db');
 const bodyParser = require('body-parser');
+const EventEmitter = require('events');
+const emitter = new EventEmitter();
 
 const app = express();
 
@@ -77,8 +79,14 @@ app.put('/providers/:name', async(req, res) => {
   const name = req.params.name;
   try{
     await db.editOne('providers', 'name', name, body);
+    emitter.emit('update', {
+      provider: name,
+      type: 'config',
+      data: body
+    });
     res.status(200).send({ success: true });
   }catch(err){
+    console.log(err)
     res.status(500).send({ success: false }); 
   }
 });
@@ -93,4 +101,4 @@ app.delete('/itens/:id', async(req, res) => {
   }  
 });
 
-module.exports = app;
+module.exports = { app, emitter };
