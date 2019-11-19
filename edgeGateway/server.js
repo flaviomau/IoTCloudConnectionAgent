@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-let inputs = [{
+let itens = [{
   id: '1348',
   name: 'Temperature',
   interval: '7000',
@@ -53,20 +53,20 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'edge-gateway-config/build', 'index.html'));
 });
 
-app.get('/inputs', (req, res) => {
-  res.send({ inputs });
+app.get('/itens', (req, res) => {
+  res.send({ itens });
 });
 
 app.get('/providers', (req, res) => {
   res.send({ providers });
 });
 
-app.get('/inputs/:id', (req, res) => {
-  const input = inputs.filter(e => {
+app.get('/itens/:id', (req, res) => {
+  const item = itens.filter(e => {
     return e.id === req.params.id
   })
-  if (input.length === 1)
-    res.send(input[0]);
+  if (item.length === 1)
+    res.send(item[0]);
   else
     res.send({});
 });
@@ -85,11 +85,15 @@ app.post('/providers', (req, res) => {
   res.send({success: true});
 });
 
-app.post('/inputs', (req, res) => {
+app.post('/itens', (req, res) => {
   res.send({success: true});
 });
 
-app.put('/inputs/:id', (req, res) => {
+app.put('/itens/:id', (req, res) => {
+  res.send({success: true});
+});
+
+app.delete('/itens/:id', (req, res) => {
   res.send({success: true});
 });
 

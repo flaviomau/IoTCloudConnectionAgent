@@ -18,15 +18,25 @@ class ItemForm extends Component {
     this.setState(state)
   }
 
+  async deleteForm(id) {
+    try {        
+      await this.deleteItem(id);
+      this.props.history.push('/')
+    } catch (err) {
+      let state = { ...this.state }
+      state.error = err.message
+      this.setState(state)
+    }
+  }
+
   async saveForm(data) {
-    console.log('data: ', data);
     if (!data.provider) {
       const state = { ...this.state }
       state.error = 'Select one provider'
       this.setState(state)
     } else {
       try {        
-        await this.saveInput(data);
+        await this.saveItem(data);
         this.props.history.push('/')
       } catch (err) {
         let state = { ...this.state }
@@ -43,7 +53,7 @@ class ItemForm extends Component {
       state.isLoading = false;
       this.setState(state);
     } else {
-      this.getInput(this.props.match.params.id)
+      this.getItem(this.props.match.params.id)
         .then(res => {
           if (JSON.stringify(res) !== '{}') {
             state.data = res;
@@ -55,8 +65,8 @@ class ItemForm extends Component {
     }    
   }
 
-  getInput = async (id) => {
-    const response = await fetch('/inputs/' + id);
+  getItem = async (id) => {
+    const response = await fetch('/itens/' + id);
     const body = await response.json();
     if (response.status !== 200) {
       throw Error(body.message)
@@ -64,19 +74,32 @@ class ItemForm extends Component {
     return body;
   }
 
-  saveInput = async (data) => {
+  saveItem = async (data) => {
     let method = 'post'
-    let url = '/inputs'
+    let url = '/itens'
 
     if(this.label === 'Edit item'){
       method = 'put'
-      url = `/inputs/${data.id}`
+      url = `/itens/${data.id}`
     }
     
     const response = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: { ...data }
+    })
+    if (response.status !== 200) {
+      throw Error('Error saving data')
+    }
+  }
+
+  deleteItem = async (id) => {
+    const method = 'delete'
+    const url = `/itens/${id}`
+    
+    const response = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' }
     })
     if (response.status !== 200) {
       throw Error('Error saving data')
@@ -126,8 +149,14 @@ class ItemForm extends Component {
                 this.state.error && <Alert variant='danger'>{this.state.error}</Alert>
               }
               <Button variant="primary" onClick={() => this.saveForm(this.state.data)}>
-                Submit
-            </Button>
+                Save
+              </Button>
+              {
+                (this.label === 'Edit item') &&
+                <Button variant="danger" className="float-sm-right" onClick={() => this.deleteForm(this.state.data.id)}>
+                  Delete
+                </Button>
+              }              
             </Form>
           </div>
         }

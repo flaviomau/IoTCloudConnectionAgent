@@ -6,8 +6,10 @@ const ItemCard = (props) => {
   return (
     <Card>
       <Card.Header>
-        {props.item.name} 
-        <Link to={`/item/${props.item.id}`} className="float-sm-right">Edit</Link>
+        {props.item.name}
+        <div className="float-sm-right">
+          <Link to={`/item/${props.item.id}`} className="text-info">Edit</Link>
+        </div>        
       </Card.Header>
       <Card.Body>
         <ul>

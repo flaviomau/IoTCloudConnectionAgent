@@ -8,7 +8,7 @@ import Container from 'react-bootstrap/Container'
 
 class Dashboard extends Component {
   state = {
-    inputs: [],
+    itens: [],
     providers: [],
     isLoading: true
   };
@@ -19,11 +19,11 @@ class Dashboard extends Component {
 
   loadData = async () => {
     try {
-      const inputs = await this.getInputs();
+      const itens = await this.getItens();
       const providers = await this.getProviders();
       this.setState({
         isLoading: false,
-        inputs,
+        itens,
         providers
       });
     } catch (err){
@@ -31,13 +31,13 @@ class Dashboard extends Component {
     }
   }
 
-  getInputs = async () => {
-    const response = await fetch('/inputs');
+  getItens = async () => {
+    const response = await fetch('/itens');
     const body = await response.json();
     if (response.status !== 200) {
       throw Error(body.message)
     }
-    return body.inputs;
+    return body.itens;
   };
 
   getProviders = async () => {
@@ -71,8 +71,8 @@ class Dashboard extends Component {
         <h2 className="header">Itens available <Link to={`/item/new`} className="float-sm-right">new item</Link></h2>
         {
           !this.state.isLoading && 
-          this.state.inputs.length > 0 && 
-          this.state.inputs.map(item => {
+          this.state.itens.length > 0 && 
+          this.state.itens.map(item => {
             return (
               <div key={item.id}>
                 <ItemCard item={item} />

@@ -12,7 +12,7 @@ const ProviderCard = (props) => {
     <Card bg={colors[props.item.name]} text="white">
       <Card.Header>
         {props.item.name} 
-        <Link to={`/provider/${props.item.name}`} className="float-sm-right text-white" text="white">Edit</Link>
+        <Link to={`/provider/${props.item.name}`} className="float-sm-right text-white">Edit</Link>
       </Card.Header>
       <Card.Body>
         <ul> { fields } </ul>
