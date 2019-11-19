@@ -1,100 +1,98 @@
 const express = require('express');
 const path = require('path');
+const db = require('./db');
+const bodyParser = require('body-parser');
+
 const app = express();
 
-let itens = [{
-  id: '1348',
-  name: 'Temperature',
-  interval: '7000',
-  max_value: '255',
-  provider: 'AWS'
-}, {
-  id: '2847',
-  name: 'Humidity',
-  interval: '5000',
-  max_value: '128',
-  provider: 'GOOGLE'
-}, {
-  id: '7845',
-  name: 'Wind',
-  interval: '7000',
-  max_value: '255',
-  provider: 'AZURE'
-}];
-
-const providers = [{
-  name: 'AWS',
-  keyPath: '',
-  certPath: '',
-  caPath: '',
-  clientId: '',
-  host: ''
-}, {
-  name: 'AZURE',
-  provisioningHost: '',
-  idScope: '',
-  registrationId: '',
-  symmetricKey: ''
-}, {
-  name: 'GOOGLE',
-  registryId: '',
-  deviceId: '',
-  projectId: '',
-  privateKeyFile: '',
-  algorithm: '',
-  region: '',
-  mqttBridgeHostname: '',
-  mqttBridgePort: '',
-  messageType: ''
-}];
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'edge-gateway-config/build')));
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'edge-gateway-config/build', 'index.html'));
 });
 
-app.get('/itens', (req, res) => {
-  res.send({ itens });
+app.get('/itens', async(req, res) => {
+  try{
+    itens = await db.readAll('itens');
+    res.status(200).send({ itens });
+  }catch(err){
+    res.status(500).send({ success: false }); 
+  }
 });
 
-app.get('/providers', (req, res) => {
-  res.send({ providers });
+app.get('/providers', async(req, res) => {
+  try{
+    providers = await db.readAll('providers');    
+    res.status(200).send({ providers });
+  }catch(err){
+    res.status(500).send({ success: false }); 
+  }
 });
 
-app.get('/itens/:id', (req, res) => {
-  const item = itens.filter(e => {
-    return e.id === req.params.id
-  })
-  if (item.length === 1)
-    res.send(item[0]);
-  else
-    res.send({});
+app.get('/itens/:id', async(req, res) => {
+  const id = req.params.id;
+  try{
+    const item = await db.readOne('itens', 'id', id);
+    res.status(200).send(item);
+  }catch(err){
+    console.log('err:', err)
+    res.status(500).send({ success: false }); 
+  }
 });
 
-app.get('/providers/:name', (req, res) => {
-  const provider = providers.filter(e => {
-    return e.name === req.params.name
-  })
-  if (provider.length === 1)
-    res.send(provider[0]);
-  else
-    res.send({});
+app.get('/providers/:name', async(req, res) => {
+  const name = req.params.name;
+  try{
+    const provider = await db.readOne('providers', 'name', name);
+    res.status(200).send(provider);
+  }catch(err){
+    res.status(500).send({ success: false }); 
+  }  
 });
 
-app.post('/providers', (req, res) => {
-  res.send({success: true});
+app.post('/itens', async(req, res) => {
+  const body = req.body;
+  try{
+    await db.insertOne('itens', body);
+    res.status(200).send({ success: true });
+  }catch(err){
+    console.log(err)
+    res.status(500).send({ success: false }); 
+  }
 });
 
-app.post('/itens', (req, res) => {
-  res.send({success: true});
+app.put('/itens/:id', async(req, res) => {
+  const body = req.body;
+  const id = req.params.id;
+  try{
+    await db.editOne('itens', 'id', id, body);
+    res.status(200).send({ success: true });
+  }catch(err){
+    res.status(500).send({ success: false }); 
+  }
 });
 
-app.put('/itens/:id', (req, res) => {
-  res.send({success: true});
+app.put('/providers/:name', async(req, res) => {
+  const body = req.body;
+  const name = req.params.name;
+  try{
+    await db.editOne('providers', 'name', name, body);
+    res.status(200).send({ success: true });
+  }catch(err){
+    res.status(500).send({ success: false }); 
+  }
 });
 
-app.delete('/itens/:id', (req, res) => {
-  res.send({success: true});
+app.delete('/itens/:id', async(req, res) => {
+  const id = req.params.id;
+  try{
+    await db.deleteOne('itens', 'id', id);
+    res.status(200).send({ success: true });
+  }catch(err){
+    res.status(500).send({ success: false }); 
+  }  
 });
 
 module.exports = app;

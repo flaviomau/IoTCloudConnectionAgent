@@ -72,9 +72,9 @@ class Dashboard extends Component {
         {
           !this.state.isLoading && 
           this.state.itens.length > 0 && 
-          this.state.itens.map(item => {
+          this.state.itens.map((item, key) => {
             return (
-              <div key={item.id}>
+              <div key={key}>
                 <ItemCard item={item} />
                 <br />
               </div>

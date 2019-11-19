@@ -50,10 +50,10 @@ class ProviderForm extends Component {
   }
 
   saveProvider = async (data) => {
-    const response = await fetch('/providers', {
-      method: 'post',
+    const response = await fetch(`/providers/${data.name}`, {
+      method: 'put',
       headers: { 'Content-Type': 'application/json' },
-      body: { ...data }
+      body: JSON.stringify({ ...data })
     })
     if (response.status !== 200) {
       throw Error('Error saving data')
@@ -82,7 +82,7 @@ class ProviderForm extends Component {
           {
             this.state.error && <Alert variant='danger'>{this.state.error}</Alert>
           }
-          <Button variant="primary" onClick={() => this.saveForm(this.state)}>
+          <Button variant="primary" onClick={() => this.saveForm(this.state.data)}>
             Save
           </Button>          
         </Form>

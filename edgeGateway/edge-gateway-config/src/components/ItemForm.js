@@ -86,7 +86,7 @@ class ItemForm extends Component {
     const response = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: { ...data }
+      body: JSON.stringify({ ...data })
     })
     if (response.status !== 200) {
       throw Error('Error saving data')
@@ -117,7 +117,7 @@ class ItemForm extends Component {
             <Form>
               <Card >
                 <Card.Body>
-                  <Form.Group>
+                  <Form.Group controlId="id">
                     <Form.Label>Id</Form.Label>
                     <Form.Control type="text" placeholder="Id" value={data.id} onChange={this.onChangeValue} />
                   </Form.Group>
