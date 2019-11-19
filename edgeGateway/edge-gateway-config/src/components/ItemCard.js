@@ -7,7 +7,7 @@ const ItemCard = (props) => {
     <Card>
       <Card.Header>
         {props.item.name} 
-        <Link to={`/detail/${props.item.id}`} className="float-sm-right">Edit</Link>
+        <Link to={`/item/${props.item.id}`} className="float-sm-right">Edit</Link>
       </Card.Header>
       <Card.Body>
         <ul>
