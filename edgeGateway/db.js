@@ -57,7 +57,6 @@ exports.readOne = async (table, key, value) => {
     if (cache[table].length === 0)
       await readData();      
     const list = cache[table].filter(e => {
-      console.log(e[key],value,e[key] === value)
       return e[key] === value
     })
     if (list.length === 1){

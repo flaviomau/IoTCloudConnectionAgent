@@ -37,7 +37,6 @@ app.get('/itens/:id', async(req, res) => {
     const item = await db.readOne('itens', 'id', id);
     res.status(200).send(item);
   }catch(err){
-    console.log('err:', err)
     res.status(500).send({ success: false }); 
   }
 });
@@ -58,7 +57,6 @@ app.post('/itens', async(req, res) => {
     await db.insertOne('itens', body);
     res.status(200).send({ success: true });
   }catch(err){
-    console.log(err)
     res.status(500).send({ success: false }); 
   }
 });
