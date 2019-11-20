@@ -76,11 +76,13 @@ git clone https://github.com/flaviomau/IoTCloudConnectionAgent.git
 ```
 cd edgeGateway
 cd edge-gateway-config
+npm install
 npm build
 ```
 * Return to the root folder and run the command bellow:
 ```
 cd ..
+npm install
 npm start
 ```
 # To be developed
